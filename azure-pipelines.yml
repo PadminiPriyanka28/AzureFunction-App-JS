@@ -67,6 +67,6 @@ stages:
     steps:
     - task: AzureFunctionApp@1
       inputs:
-        azureSubscription: '$(azureSubscription)'  # Set up in Azure DevOps
+        azureSubscription: 'AzureServiceConnection'  # Set up in Azure DevOps
         appName: 'myAzureFunctionApp'  # Replace with your function app name
         package: '$(Pipeline.Workspace)/drop/functionapp.zip'
