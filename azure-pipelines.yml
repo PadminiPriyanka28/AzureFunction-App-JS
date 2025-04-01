@@ -99,12 +99,18 @@ stages:
       inputs:
         script: |
           npm install
+    - task: CmdLine@2
+      displayName: 'Install 7-Zip'
+      inputs:
+        script: |
+          choco install 7zip
 
     - task: CmdLine@2
       displayName: 'Package the function app'
       inputs:
         script: |
           zip -r functionapp.zip .
+
 
     - task: PublishBuildArtifacts@1
       inputs:
