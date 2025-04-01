@@ -76,7 +76,7 @@ trigger:
     include:
     - main
 pool:
-  vmImage: 'ubuntu-latest'
+  name: AzurePipeline
 stages:
 - stage: Build
   displayName: 'Build Stage'
