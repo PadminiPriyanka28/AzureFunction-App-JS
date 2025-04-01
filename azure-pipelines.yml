@@ -75,8 +75,14 @@ trigger:
   branches:
     include:
     - main
+
+# Enable debug logging
+variables:
+  system.debug: true  # This will turn on detailed logging
+
 pool:
-  name: AzurePipeline
+  name: AzurePipeline  # Replace with the name of your self-hosted agent pool
+
 stages:
 - stage: Build
   displayName: 'Build Stage'
@@ -86,21 +92,25 @@ stages:
     steps:
     - task: NodeTool@0
       inputs:
-        versionSpec: '18.x'
+        versionSpec: '18.x'  # Specify the Node.js version you need
+
     - task: CmdLine@2
       displayName: 'Install dependencies'
       inputs:
         script: |
           npm install
+
     - task: CmdLine@2
       displayName: 'Package the function app'
       inputs:
         script: |
           zip -r functionapp.zip .
+
     - task: PublishBuildArtifacts@1
       inputs:
         pathToPublish: 'functionapp.zip'
         artifactName: 'drop'
+
 - stage: Test
   displayName: 'Test Stage'
   jobs:
@@ -112,6 +122,7 @@ stages:
       inputs:
         script: |
           npm test
+
 - stage: Deploy
   displayName: 'Deploy Stage'
   jobs:
@@ -120,7 +131,8 @@ stages:
     steps:
     - task: AzureFunctionApp@1
       inputs:
-        azureSubscription: 'AzureServiceConnection'
-        appName: 'myAzureFunctionApp'
+        azureSubscription: 'AzureServiceConnection'  # Use your Azure Service Connection name
+        appName: 'myAzureFunctionApp'  # Replace with your actual Function App name
         package: '$(Pipeline.Workspace)/drop/functionapp.zip'
+
 
