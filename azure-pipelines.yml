@@ -1,30 +1,82 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# # Starter pipeline
+# # Start with a minimal pipeline that you can customize to build and deploy your code.
+# # Add steps that build, run tests, deploy, and more:
+# # https://aka.ms/yaml
+
+# # trigger:
+# # - main
+
+# # pool:
+# #   vmImage: ubuntu-latest
+
+# # steps:
+# # - script: echo Hello, world!
+# #   displayName: 'Run a one-line script'
+
+# # - script: |
+# #     echo Add other tasks to build, test, and deploy your project.
+# #     echo See https://aka.ms/yaml
+# #   displayName: 'Run a multi-line script'
+
 
 # trigger:
 # - main
 
 # pool:
-#   vmImage: ubuntu-latest
+#   vmImage: 'ubuntu-latest'
 
-# steps:
-# - script: echo Hello, world!
-#   displayName: 'Run a one-line script'
+# stages:
+# - stage: Build
+#   displayName: 'Build Stage'
+#   jobs:
+#   - job: Build
+#     displayName: 'Build the Function App'
+#     steps:
+#     - task: NodeTool@0
+#       inputs:
+#         versionSpec: '18.x'  # Use the Node.js version you need
 
-# - script: |
-#     echo Add other tasks to build, test, and deploy your project.
-#     echo See https://aka.ms/yaml
-#   displayName: 'Run a multi-line script'
+#     - script: |
+#         npm install
+#       displayName: 'Install dependencies'
 
+#     - script: |
+#         zip -r functionapp.zip .
+#       displayName: 'Package the function app'
+
+#     - task: PublishBuildArtifacts@1
+#       inputs:
+#         pathToPublish: 'functionapp.zip'
+#         artifactName: 'drop'
+
+# - stage: Test
+#   displayName: 'Test Stage'
+#   jobs:
+#   - job: Test
+#     displayName: 'Run Unit Tests'
+#     steps:
+#     - script: |
+#         npm test
+#       displayName: 'Run Tests'
+
+# - stage: Deploy
+#   displayName: 'Deploy Stage'
+#   jobs:
+#   - job: Deploy
+#     displayName: 'Deploy Function to Azure'
+#     steps:
+#     - task: AzureFunctionApp@1
+#       inputs:
+#         azureSubscription: 'AzureServiceConnection'  # Set up in Azure DevOps
+#         appName: 'myAzureFunctionApp'  # Replace with your function app name
+#         package: '$(Pipeline.Workspace)/drop/functionapp.zip'
 
 trigger:
-- main
-
+  branches:
+    include:
+    - main
 pool:
   vmImage: 'ubuntu-latest'
-
 stages:
 - stage: Build
   displayName: 'Build Stage'
@@ -34,31 +86,32 @@ stages:
     steps:
     - task: NodeTool@0
       inputs:
-        versionSpec: '18.x'  # Use the Node.js version you need
-
-    - script: |
-        npm install
+        versionSpec: '18.x'
+    - task: CmdLine@2
       displayName: 'Install dependencies'
-
-    - script: |
-        zip -r functionapp.zip .
+      inputs:
+        script: |
+          npm install
+    - task: CmdLine@2
       displayName: 'Package the function app'
-
+      inputs:
+        script: |
+          zip -r functionapp.zip .
     - task: PublishBuildArtifacts@1
       inputs:
         pathToPublish: 'functionapp.zip'
         artifactName: 'drop'
-
 - stage: Test
   displayName: 'Test Stage'
   jobs:
   - job: Test
     displayName: 'Run Unit Tests'
     steps:
-    - script: |
-        npm test
+    - task: CmdLine@2
       displayName: 'Run Tests'
-
+      inputs:
+        script: |
+          npm test
 - stage: Deploy
   displayName: 'Deploy Stage'
   jobs:
@@ -67,6 +120,7 @@ stages:
     steps:
     - task: AzureFunctionApp@1
       inputs:
-        azureSubscription: 'AzureServiceConnection'  # Set up in Azure DevOps
-        appName: 'myAzureFunctionApp'  # Replace with your function app name
+        azureSubscription: 'AzureServiceConnection'
+        appName: 'myAzureFunctionApp'
         package: '$(Pipeline.Workspace)/drop/functionapp.zip'
+
