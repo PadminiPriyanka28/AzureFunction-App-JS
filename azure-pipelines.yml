@@ -132,7 +132,7 @@ stages:
     steps:
     - task: AzureFunctionApp@1
       inputs:
-        azureSubscription: 'AzureServiceConnection'  # Use your Azure Service Connection name
+        azureSubscription: 'AzureServiceConnection1'  # Use your Azure Service Connection name
         appName: 'AzurePipelineFunctionApp'  # Replace with your actual Function App name
         package: '$(Pipeline.Workspace)/drop/functionapp.zip'
 
