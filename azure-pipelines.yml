@@ -108,7 +108,7 @@ stages:
     - task: PublishBuildArtifacts@1
       inputs:
         pathToPublish: 'functionapp.zip'
-        artifactName: 's'
+        artifactName: 'drop'
 
 - stage: Test
   displayName: 'Test Stage'
@@ -128,10 +128,18 @@ stages:
   - job: Deploy
     displayName: 'Deploy Function to Azure'
     steps:
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        artifactName: 'drop'  # 🔹 Refers to the published artifact
+        downloadPath: 'C:\Users\Butt\CICD\_work\1'  # Downloads to a temporary location
+
+    - script: dir C:\Users\Butt\CICD\_work\1\drop
+      displayName: 'Check downloaded artifacts'  # Debugging step
+
     - task: AzureFunctionApp@1
       inputs:
         azureSubscription: 'AzureServiceConnection1'  # Use your Azure Service Connection name
         appName: 'AzurePipelineFunctionApp'  # Replace with your actual Function App name
-        package: 'C:\Users\Butt\CICD\_work\1\s\functionapp.zip'
+        package: 'C:\Users\Butt\CICD\_work\1\drop\functionapp.zip'
 
 
